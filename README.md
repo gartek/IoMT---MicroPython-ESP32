@@ -5,5 +5,5 @@ Tutoriales y proyectos para la ESP32 bajo micropython bajo el esquema de Interne
 
 #TODO List
 
-[] Libreria OSC simplificada
-[] Librerias de Sensores
+- [ ] Libreria OSC simplificada
+- [ ] Librerias de Sensores
