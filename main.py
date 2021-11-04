@@ -1,15 +1,35 @@
 import wifi
 import usocket
-import esp32
+import utime
+from machine import Pin, ADC
+import _thread
 
-print('Executing code')
-pd_host = '192.168.1.114'
-pd_port = 15000
+def serverThread():
+    addr = usocket.getaddrinfo('0.0.0.0', 5050)[0][-1]
+    server = usocket.socket(usocket.AF_INET, usocket.SOCK_DGRAM)
+    server.bind(addr)
+    print('Servidor listo para recibir')
+    while True:
+        data, direccion = server.recvfrom(2)
+        print('De: {}: recibi:{}'.format(direccion,data))
+
+
+ldr = ADC(Pin(32))
+ldr2 = ADC(Pin(34))
+ldr.atten(ADC.ATTN_11DB)       #Full range: 3.3v
+#ldr2.atten(ADC.ATTN_11DB)
+
+pd_host = '192.168.1.115'
+pd_port = 4444
 wifi.wifi_connect()
+print('Executing code')
 pd = usocket.socket(usocket.AF_INET, usocket.SOCK_DGRAM)
 pd.connect((pd_host, pd_port))
 print('Connected to {}:{}'.format(pd_host, pd_port))
+_thread.start_new_thread(serverThread, ())
 while True:
-    pot_value = pot.read()
-    pd.send(pot_value.to_bytes(8,"big"))
-    utime.sleep_ms(200)
+    ldr_value = ldr.read()
+    ldr2_value = ldr2.read()
+    pd.send(ldr_value.to_bytes(2,"big") + (ldr2_value.to_bytes(2,"big")))
+    # print(ldr_value)
+    utime.sleep_ms(20)
