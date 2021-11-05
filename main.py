@@ -1,7 +1,7 @@
 import wifi
 import usocket
 import utime
-from machine import Pin, ADC
+from machine import Pin, ADC, PWM
 import _thread
 
 def serverThread():
@@ -12,6 +12,7 @@ def serverThread():
     while True:
         data, direccion = server.recvfrom(2)
         print('De: {}: recibi:{}'.format(direccion,data))
+
 
 
 ldr = ADC(Pin(32))
