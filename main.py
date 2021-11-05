@@ -5,6 +5,13 @@ from machine import Pin, ADC, PWM
 import _thread
 
 def serverThread():
+    # Modificar Pin segun sus conexiones yo usé 12 como ejemplo
+    pwm = PWM(Pin(12))
+    ## Para modificar la freq (no es necesario para el L298N)
+    ## Por defecto para ESP32 es 5kHz y para ESP8266 es 1kHz
+    # pwm.freq(VALOR_FREQ)
+    ## Para modificar el ciclo util entre 0 y 1023 (0 para 0%, 1023 para 100%)
+    pwm.duty(600)
     addr = usocket.getaddrinfo('0.0.0.0', 5050)[0][-1]
     server = usocket.socket(usocket.AF_INET, usocket.SOCK_DGRAM)
     server.bind(addr)
@@ -12,8 +19,10 @@ def serverThread():
     while True:
         data, direccion = server.recvfrom(2)
         print('De: {}: recibi:{}'.format(direccion,data))
-
-
+        # Para mover el motor con el L298 es convertir el valor que se recibe
+        # en un valor para el ciclo util Ej:
+        # pwm.duty(data)
+        # **OJO, tambien deben decidir con pines normales la direccion del giro.
 
 ldr = ADC(Pin(32))
 ldr2 = ADC(Pin(34))
